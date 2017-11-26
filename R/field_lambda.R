@@ -1,4 +1,4 @@
-read_spectra <-
+read_field_lambda <-
   function(file_path, unit_select = "photon"){
 
     measured_times <-
