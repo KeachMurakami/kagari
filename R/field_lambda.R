@@ -1,10 +1,13 @@
-
-
 read_spectra <-
   function(file_path, unit_select = "photon"){
 
-    file_path %>%
-      fread(nrows = 1)
+    measured_times <-
+      file_path %>%
+      data.table::fread(nrows = 1) %>%
+      names %>%
+      stringr::str_subset(pattern = "^[:digit:]{4}") %>%
+      lubridate::ymd_hms() %>%
+      dplyr::data_frame(log_number = seq_along(.), time = .)
 
     column_num <-
       file_path %>%
@@ -19,7 +22,8 @@ read_spectra <-
       tidyr::separate(variable, c("unit", "log_number")) %>%
       dplyr::mutate(file = file_path,
                     log_number = as.numeric(log_number)) %>%
-      dplyr::filter(unit == unit_select)
+      dplyr::filter(unit == unit_select) %>%
+      dplyr::left_join(., measured_times, by = "log_number")
   }
 
 calc_reflectance <-
@@ -31,8 +35,7 @@ calc_reflectance <-
              {
                white_spectra <<-
                  dplyr::filter(., is_object == F) %>%
-                 dplyr::rename(raw_standard = value) %>%
-                 dplyr::select(-log_number)
+                 dplyr::transmute(wavelength, group_number, raw_standard = value)
                leaf_spectra <<-
                  dplyr::filter(., is_object == T) %>%
                  dplyr::rename(raw_leaf = value)
@@ -40,25 +43,33 @@ calc_reflectance <-
 
     dplyr::left_join(leaf_spectra,
                      white_spectra,
-                     by = c("wavelength", "group_number", "file", "unit")) %>%
-      dplyr::transmute(file, log_number, group_number, unit, wavelength, reflectance = raw_leaf / raw_standard)
+                     by = c("wavelength", "group_number")) %>%
+      dplyr::transmute(file, time, log_number, unit, wavelength, reflectance = raw_leaf / raw_standard)
   }
 
 
-# calc_pri_spectr <-
-#   function(tbl, band530 = c(526, 536), band570 = c(565, 575)){
-#     tbl %>%
-#       select(wavelength, log_number, reflectance) %>%
-#       {
-#         band530 <-
-#           filter(., between(wavelength, band530[1], band530[2])) %>%
-#           group_by(log_number) %>%
-#           summarise(r530 = sum(reflectance))
-#         band570 <-
-#           filter(., between(wavelength, band570[1], band570[2])) %>%
-#           group_by(log_number) %>%
-#           summarise(r570 = sum(reflectance))
-#         left_join(band530, band570, by = c("log_number")) %>%
-#           mutate(pri = calc_pri(r530, r570))
-#       }
-#   }
+calc_band <-
+  function(tbl_group, band_1 , band_2){
+    tbl_group %>%
+    {
+      band_1 <-
+        dplyr::filter(., dplyr::between(wavelength, range(band_1)[1], range(band_1)[2])) %>%
+        summarise(band_1 = sum(reflectance, na.rm = T))
+      band_2 <-
+        dplyr::filter(., dplyr::between(wavelength, range(band_2)[1], range(band_2)[2])) %>%
+        dplyr::summarise(band_2 = sum(reflectance, na.rm = T))
+      left_join(band_1, band_2, by = group_vars(tbl_group))
+    }
+  }
+
+`_calc_index` <-
+  function(tbl_group, width, center_shorter, center_longer){
+    band_half <- width / 2
+    calc_band(tbl_group, (center_shorter - band_half):(center_shorter + band_half), (center_longer - band_half):(center_longer + band_half))
+  }
+
+calc_pri <-
+  function(tbl_group, width){
+    `_calc_index`(tbl_group, center_shorter = 531, center_longer = 570, width) %>%
+      dplyr::mutate(pri = (band_1 - band_2)/(band_1 + band_2))
+  }
