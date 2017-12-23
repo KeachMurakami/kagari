@@ -29,8 +29,11 @@ read_field_lambda <-
 calc_reflectance <-
   function(tbl, design_vector = c(standard = F, target_object = T)){
 
+    standards <-
+      (0:1000) * length(design_vector) + which(!design_vector)
+
     tbl %>%
-      dplyr::mutate(is_object = log_number %% length(design_vector) %in% which(design_vector),
+      dplyr::mutate(is_object = log_number %!in% standards,
                     group_number = (log_number - 1) %/% length(design_vector) + 1) %>%
              {
                white_spectra <<-
