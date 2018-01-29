@@ -1,6 +1,7 @@
 read_li6400 <-
   function(file_path, ...){
-    data_all <- readr::read_csv(file_path, col_names = FALSE)
+    data_all <-
+      readr::read_csv(file_path, col_names = FALSE, ...)
 
     data_all$X1 %>% {
       log_rows <<-
