@@ -16,18 +16,18 @@ read_color_reader <-
       data_all[2:6, 1:2]
 
     data_body <-
-      dplyr::bind_rows(
+      dplyr::bind_cols(
         data_all[8:9, 2:5] %>%
           set_colnames(c("L", "a", "b", "dE76")),
         data_all[10:11, 3:5] %>%
           set_colnames(c("C", "H", "dE94"))
       ) %>%
-      dplyr::mutate(measured_object = rep(c("target", "sample"), times = 2)) %>%
-      tidyr::gather(variable, value, -measured_object) %>%
-      dplyr::mutate(value = as.numeric(value)) %>%
-      na.omit %>%
+      dplyr::mutate(measured_object = c("target", "sample")) %>%
+      dplyr::mutate(L = as.numeric(L)) %>%
       dplyr::left_join(., data_times, by = "measured_object") %>%
-      dplyr::arrange(measured_object)
+      dplyr::select(measured_object, time, everything())
+
+    attributes(data_body)$info <- data_info
 
     return(data_body)
     }
