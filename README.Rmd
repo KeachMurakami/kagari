@@ -33,15 +33,17 @@ devtools::install_github("KeachMurakami/kagari")
 
 `read_***` handles raw data obtained by `***`---a name of the software or the device:
 
-* `read_field_lambda()`: read `.csv` format data obtained by color viewer for field-lambda.
+* `read_li6400()`: read `.txt`/`.csv`/`.tsv` format data obtained by LI6400/LI6400XT (LI-COR) with Xterm.
 
-* `read_junior_pam()`: read `.csv` format data obtained by WinControl for JUNIOR-PAM (Heinz Walz).
+* `read_junior_pam()`: read `.csv` format data obtained by JUNIOR-PAM (Heinz Walz) with WinControl.
+
+* `read_field_lambda()`: read `.csv` format data obtained by field-lambda with color viewer.
 
 * `read_color_reader()`: read `.csv` format data obtained by CR-10 Plus (Konica Minolta).
 
 
-The first argument is always a file path.  
-The output is wide format data containing the measured variables and measured time.  
+The first argument is always a file path.
+The output is wide format data containing the measured variables and measured times.
 
 <!-- ```{r demo_read} -->
 <!-- library(gasexchangeR) -->
