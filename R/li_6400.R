@@ -82,7 +82,7 @@ read_li6400 <-
         dplyr::slice(change_rows) %>%
         tidyr::extract(X1, into = c("time", "log"),
                        regex = "(.+:[0-9]+) (.+)") %>%
-        dplyr::mutate(time = lubridate::ymd_hms(paste0(date_logged + date_correction[change_rows], " ", time)))
+        dplyr::mutate(time = lubridate::ymd_hms(paste0(date_started + date_correction[change_rows], " ", time)))
     }
 
     attributes(data_body_cleaned)$info <- operation_info
