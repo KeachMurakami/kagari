@@ -4,7 +4,7 @@ read_junior_pam <-
     data_body <-
       file_path %>%
       readr::read_csv(skip = 1) %>%
-      slice(-1)
+      dplyr::slice(-1)
 
     data_body %>%
       dplyr::select(date = Date, hhmmss = Time, type = Type,
