@@ -16,7 +16,9 @@ knitr::opts_chunk$set(
 
 # kagari (縢り)
 
-kagari organizes individual data from various measuring instruments into tidy dataset.
+This package organizes individual data from various measuring instruments into tidy dataset.
+`kagari` is a Japanese word meaning sew (c.f [和綴じ](https://www.google.co.jp/search?q=%E5%92%8C%E7%B6%B4%E3%81%98&source=lnms&tbm=isch)).
+The author wish to sew a user-friendly book---i.e. tidy dataset---from individual pages---i.e. messy raw data.
 
 You can install:
 
@@ -27,12 +29,19 @@ You can install:
 devtools::install_github("KeachMurakami/kagari")
 ```
 
-
 ## Reading
 
-`read_***` handles raw data obtained by the `***`---a name of software or device:
+`read_***` handles raw data obtained by `***`---a name of the software or the device:
 
-* `read_field_lambda()`: read `.csv` format data obtained by color viewer for field-lambda
+* `read_field_lambda()`: read `.csv` format data obtained by color viewer for field-lambda.
+
+* `read_junior_pam()`: read `.csv` format data obtained by WinControl for JUNIOR-PAM (Heinz Walz).
+
+* `read_color_reader()`: read `.csv` format data obtained by CR-10 Plus (Konica Minolta).
+
+
+The first argument is always a file path.  
+The output is wide format data containing the measured variables and measured time.  
 
 <!-- ```{r demo_read} -->
 <!-- library(gasexchangeR) -->
