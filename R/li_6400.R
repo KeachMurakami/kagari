@@ -1,5 +1,5 @@
 read_li6400 <-
-  function(file_path, .verbose = F, ...){
+  function(file_path, col_types = cols(), .verbose = F, ...){
     data_all <-
       suppressWarnings(readr::read_csv(file_path, col_names = FALSE, ...))
     if(.verbose){

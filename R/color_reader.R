@@ -1,11 +1,11 @@
 read_color_reader <-
-  function(file_path, ...){
+  function(file_path, col_types = cols(), ...){
 
     time_cols <- rlang::quos(c(paste0("X", 2:7)))
 
     data_all <-
       file_path %>%
-      readr::read_csv(col_names = F)
+      readr::read_csv(col_names = F, col_types = col_types)
 
     data_times <-
       data_all[c(1, 7),] %>%
