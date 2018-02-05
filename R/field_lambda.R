@@ -1,5 +1,5 @@
 read_field_lambda <-
-  function(file_path, unit_select = "photon"){
+  function(file_path, unit_select = "photon", col_types = cols(), .verbose = F, ...){
 
     measured_times <-
       file_path %>%
@@ -10,14 +10,20 @@ read_field_lambda <-
       dplyr::data_frame(log_number = seq_along(.), time = .)
 
     column_num <-
-      file_path %>%
-      readr::read_csv(skip = 39) %>%
+      suppressWarnings(readr::read_csv(file_path, skip = 39, col_types = col_types)) %>%
       ncol - 1
 
     column_names <-
       paste0(rep(c("lumen", "photon"), times = column_num/2), "_", rep(1:(column_num/2), each = 2))
 
-    readr::read_csv(file_path, skip = 39, col_names = c("wavelength", column_names)) %>%
+    data_body <-
+      suppressWarnings(readr::read_csv(file_path, skip = 39, col_names = c("wavelength", column_names), col_types = col_types, ...))
+    if(.verbose){
+      data_body <-
+        readr::read_csv(file_path, skip = 39, col_names = c("wavelength", column_names), col_types = col_types, ...)
+    }
+
+    data_body %>%
       tidyr::gather(variable, value, -wavelength) %>%
       tidyr::separate(variable, c("unit", "log_number")) %>%
       dplyr::mutate(file = file_path,
