@@ -1,5 +1,5 @@
 read_color_reader <-
-  function(file_path, col_types = cols(), ...){
+  function(file_path, col_types = cols(), ..., .verbose = F){
 
     time_cols <- rlang::quos(c(paste0("X", 2:7)))
 

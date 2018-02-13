@@ -1,5 +1,5 @@
 read_junior_pam <-
-  function(file_path, col_types = cols(), .verbose = F, ...){
+  function(file_path, col_types = cols(), ..., .verbose = F){
 
     data_body <-
       suppressWarnings(readr::read_csv(file_path, col_types = col_types, skip = 1)) %>%
