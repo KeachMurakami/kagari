@@ -1,5 +1,5 @@
 read_field_lambda <-
-  function(file_path, unit_select = "photon", col_types = cols(), ..., .verbose = F){
+  function(file_path, unit_select = c("photon", "irradiance")[1], col_types = cols(), ..., .verbose = F){
 
     measured_times <-
       file_path %>%
