@@ -35,25 +35,31 @@ read_field_lambda <-
 calc_reflectance <-
   function(tbl, design_vector = c(standard = F, target_object = T)){
 
-    standards <-
-      (0:1000) * length(design_vector) + which(!design_vector)
+    standards <- which(!design_vector)
+
+    if(!design_vector[1]){
+      group <- cumsum(!design_vector)
+    } else {
+      group <- cumsum(design_vector)
+    }
 
     tbl %>%
       dplyr::mutate(is_object = log_number %!in% standards,
-                    group_number = (log_number - 1) %/% length(design_vector) + 1) %>%
+                    group_number = group[log_number]) %>%
              {
-               white_spectra <<-
+               white_spectra <-
                  dplyr::filter(., is_object == F) %>%
                  dplyr::transmute(wavelength, group_number, raw_standard = value)
-               leaf_spectra <<-
+               leaf_spectra <-
                  dplyr::filter(., is_object == T) %>%
                  dplyr::rename(raw_leaf = value)
-             }
 
-    dplyr::left_join(leaf_spectra,
-                     white_spectra,
-                     by = c("wavelength", "group_number")) %>%
-      dplyr::transmute(file, time, log_number, unit, wavelength, reflectance = raw_leaf / raw_standard)
+               dplyr::left_join(leaf_spectra,
+                                white_spectra,
+                                by = c("wavelength", "group_number")) %>%
+                 dplyr::transmute(file, time, log_number, unit, wavelength, reflectance = raw_leaf / raw_standard) %>%
+                 return()
+             }
   }
 
 
