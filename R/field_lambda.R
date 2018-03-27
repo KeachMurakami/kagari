@@ -14,7 +14,7 @@ read_field_lambda <-
       ncol - 1
 
     column_names <-
-      paste0(rep(c("lumen", "photon"), times = column_num/2), "_", rep(1:(column_num/2), each = 2))
+      paste0(rep(c("irradiance", "photon"), times = column_num/2), "_", rep(1:(column_num/2), each = 2))
 
     data_body <-
       suppressWarnings(readr::read_csv(file_path, skip = 39, col_names = c("wavelength", column_names), col_types = col_types, ...))
