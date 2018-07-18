@@ -1,3 +1,7 @@
+#' Read junior-pam data
+#'
+#' @export
+#' @return a tibble
 read_junior_pam <-
   function(file_path, col_types = cols(), ..., .verbose = F){
 

@@ -1,3 +1,8 @@
+#' Read color-reader data
+#'
+#' @description.
+#' @export
+#' @return a tibble
 read_color_reader <-
   function(file_path, col_types = cols(), ..., .verbose = F){
 

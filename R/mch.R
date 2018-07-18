@@ -1,8 +1,11 @@
-# Default output file is .XLS
-# Since neither {readxl} nor {xlsx} deals with the files, the files must be manually converted into another format.
-
+#' Read MCH383SD data
+#'
+#' @export
+#' @return a tibble
 read_mch <-
   function(file_path, col_types = cols(), ..., .verbose = F){
+  # Default output file is .XLS
+  # Since neither {readxl} nor {xlsx} deals with the files, the files must be manually converted into another format.
 
     data_all <-
       suppressWarnings(readr::read_csv(file_path, col_types = col_types, ...))

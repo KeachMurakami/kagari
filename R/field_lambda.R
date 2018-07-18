@@ -1,3 +1,7 @@
+#' Read field-lambda data
+#'
+#' @export
+#' @return a tibble
 read_field_lambda <-
   function(file_path, unit_select = c("photon", "irradiance")[1], col_types = cols(), ..., .verbose = F){
 

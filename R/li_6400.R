@@ -1,3 +1,7 @@
+#' Read LI6400/LI6400XT data
+#'
+#' @export
+#' @return a tibble
 read_li6400 <-
   function(file_path, col_types = cols(), ..., .verbose = F){
     data_all <-
