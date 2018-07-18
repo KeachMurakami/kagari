@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 This package organizes individual data from various measuring instruments into tidy dataset.
 `kagari` is a Japanese word meaning sew (c.f [和綴じ](https://www.google.co.jp/search?q=%E5%92%8C%E7%B6%B4%E3%81%98&source=lnms&tbm=isch)).
-The author wish to sew a user-friendly book---i.e. tidy dataset---from individual pages---i.e. messy raw data.
+The author hope to sew a user-friendly book---i.e. tidy dataset---from individual pages---i.e. messy raw data.
 
 You can install:
 
@@ -29,57 +29,48 @@ You can install:
 devtools::install_github("KeachMurakami/kagari")
 ```
 
-## Reading
+## Prerequisite
 
-`read_***` handles raw data obtained by `***`---a name of the software or the device:
+```{r prerequisite}
+library(tidyverse)
+library(kagari)
+```
 
-* `read_li6400()`: read `.txt`/`.csv`/`.tsv` format data obtained by LI6400/LI6400XT (LI-COR) with Xterm.
+## Data load
 
-* `read_junior_pam()`: read `.csv` format data obtained by JUNIOR-PAM (Heinz Walz) with WinControl.
+`read_***` deals with raw data obtained by `***`---a name of the software or the device:
 
-* `read_field_lambda()`: read `.csv` format data obtained by field-lambda with color viewer.
+* `read_li6400()`: reads `.txt`/`.csv`/`.tsv` format data obtained by LI6400/LI6400XT (LI-COR) with Xterm.
 
-* `read_color_reader()`: read `.csv` format data obtained by CR-10 Plus (Konica Minolta).
+* `read_junior_pam()`: reads `.csv` format data obtained by JUNIOR-PAM (Heinz Walz) with WinControl.
 
+* `read_field_lambda()`: reads `.csv` format data obtained by field-lambda with color viewer.
+
+* `read_color_reader()`: reads `.csv` format data obtained by CR-10 Plus (Konica Minolta).
 
 The first argument is always a file path.
 The output is wide format data containing the measured variables and measured times.
 
-<!-- ```{r demo_read} -->
-<!-- library(gasexchangeR) -->
+## Data manipulation
 
-<!-- sample_single <- "https://raw.githubusercontent.com/KeachMurakami/gasexchangeR/master/R/LI6400.txt" -->
-<!-- sample_multi <- c("https://raw.githubusercontent.com/KeachMurakami/gasexchangeR/master/R/LI6400.txt", -->
-<!--                   "https://raw.githubusercontent.com/KeachMurakami/gasexchangeR/master/R/LI6400XT.txt") -->
+`mutate_***` calculates parameters from raw data obtained by `***`---a name of the software or the device---and adds new columns to the input `tibble`.
 
-<!-- # simple read -->
-<!-- read_licor(file = sample_single) -->
+* `mutate_oxy()`: calculates and adds maximum gross photosynthetic O~2~ evolution rate, functional PSII content, and cytochrome content from data obtained by liquid phase oxygen electrode system (Hansatech) with single-turnover.
 
-<!-- # include logs for changes in conditions -->
-<!-- read_licor(file = sample_single, info_log = T) -->
+```{r demo-mutate_oxy}
+tibble(o2_calibration = c(1.3, 1.31),
+       pn_under_saturing_irradiance = c(.3, .51),
+       pn_under_dark = c(-.11, -.05),
+       pn_under_fr_and_flash = c(.1, .09),
+       pn_under_fr = c(-.002, 0)) %>%
+  mutate_oxy(.tbl = ., calb = o2_calibration,
+             positive_pmax = pn_under_saturing_irradiance, negative_pmax = pn_under_dark,
+             positive_psii = pn_under_fr_and_flash, negative_psii = pn_under_fr,
+             leaf_area = 2.22*10^-4, hz = 10) %>%
+  knitr::kable(format = "markdown")
+```
 
-<!-- # read multiple files into a data frame -->
-<!-- read_licor(file = sample_multi) -->
-<!-- ``` -->
-
-
-<!-- ## Visualizations -->
-
-<!-- `gasexchangeR` implements the following verbs useful for visualizations: -->
-
-<!-- * `li_scat()`: view a relationship between variables -->
-<!--     * `li_scat_light()`: -->
-<!--     * `li_scat_co2()`: -->
-<!--     * `li_scat_h2o()`: -->
-<!--     * `li_scat_temp()`: -->
-<!-- * `li_course()`: view time course of a variable -->
-<!-- * `li_check()`: view primitive plots to check the environmental stability during the measurement -->
-
-<!-- ```{r demo_plot} -->
-<!-- li_scat(file = sample_multi, color = "VpdL") -->
-<!-- li_course(file = sample_multi, color = "Ci") -->
-<!-- ``` -->
-
+The first argument is always a tibble.
 
 ## Session information
 
